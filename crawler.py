@@ -1,12 +1,9 @@
-
-
-
 class Crawler(object):
-    def __init__(self,
+	def __init__(self,
                  base_url='https://www.csie.ntu.edu.tw/news/',
                  rel_url='news.php?class=101'):
-        self.base_url = base_url
-        self.rel_url = rel_url
+		self.base_url = base_url
+		self.rel_url = rel_url
 
     def crawl(self, start_date, end_date,
               date_thres=datetime(2012, 1, 1)):
@@ -15,21 +12,21 @@ class Crawler(object):
         1. Note that you need to sleep 0.1 seconds for any request.
         2. It is welcome to modify TA's template.
         """
-        if end_date < date_thres:
-            end_date = date_thres
-        contents = list()
-        page_num = 0
-        while True:
-            rets, last_date = self.crawl_page(
-                start_date, end_date, page=f'&no={page_num}')
-            page_num += 10
-            if rets:
-                contents += rets
-            if last_date < start_date:
-                break
-        return contents
+		if end_date < date_thres:
+			end_date = date_thres
+		contents = list()
+		page_num = 0
+		while True:
+			rets, last_date = self.crawl_page(
+			start_date, end_date, page=f'&no={page_num}')
+			page_num += 10
+			if rets:
+				contents += rets
+			if last_date < start_date:
+				break
+			return contents
 
-    def crawl_page(self, start_date, end_date, page=''):
+	def crawl_page(self, start_date, end_date, page=''):
         """Parse ten rows of the given page
 
         Parameters:
@@ -41,12 +38,12 @@ class Crawler(object):
             content (list): a list of date, title, and content
             last_date (datetime): the smallest date in the page
         """
-        res = requests.get(
+		res = requests.get(
             self.base_url + self.rel_url + page,
             headers={'Accept-Language':
                      'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-CN;q=0.6'}
         ).content.decode()
-        sleep(0.1)
+		sleep(0.1)
         # TODO: parse the response and get dates, titles and relative url with etree
 		root = etree.HTML(res)
 		dates = root.xpath('//div[1]/div/div[2]/div/div/div[2]/div/table/tbody/tr/td[1]')
@@ -55,8 +52,8 @@ class Crawler(object):
 		titles = root.xpath('//div[1]/div/div[2]/div/div/div[2]/div/table/tbody/tr/td[2]/a')
 		rel_urls = root.xpath('//div[1]/div/div[2]/div/div/div[2]/div/table/tbody/tr/td[2]/a/@href')
 		last_date = end_date
-        contents = list()
-        for i in range(len(dates)):
+		contents = list()
+		for i in range(len(dates)):
             # TODO: 1. concatenate relative url to full url
             #       2. for each url call self.crawl_content
             #          to crawl the content
@@ -71,10 +68,10 @@ class Crawler(object):
 			content = self.crawl_content(url)
 			obj = [dates[i],titles[i],content]
 			contents.append(obj)
+	
+	return contents, last_date
 
-        return contents, last_date
-
-    def crawl_content(self, url):
+	def crawl_content(self, url):
         """Crawl the content of given url
 
         For example, if the url is
@@ -87,7 +84,7 @@ class Crawler(object):
             headers={'Accept-Language':
                      'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7,zh-CN;q=0.6'}
         ).content.decode()
-        sleep(0.1)
+		sleep(0.1)
 		root = etree.HTML(res)
 		content = root.xpath('//div[1]/div/div[2]/div/div/div[2]/div/div[2]')
 		return content
