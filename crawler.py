@@ -92,6 +92,7 @@ class Crawler(object):
 		time.sleep(0.1)
 		root = etree.HTML(res)
 		content = root.xpath('//div[1]/div/div[2]/div/div/div[2]/div/div[2]/text()')
+		content[0].replace("\"","\"\"")
 		#print(content)
 		return content
 		
